@@ -13,7 +13,8 @@ var roomSchema = new Schema({
   image: {
     type: [String]
   },
-  class: {
+  roomClass: {
+    //
     type: String,
     required: true
   },
@@ -35,7 +36,10 @@ var roomSchema = new Schema({
   },
 
   review: {
-    total: Number,
+    total: {
+      type: Number,
+      default: 0
+    },
     allReviews: [
       {
         name: {
@@ -55,8 +59,8 @@ var roomSchema = new Schema({
   },
   status: {
     currentStatus: {
-      type: Number, // 0 : free, 1 : closed, 2 : booked
-      required: true
+      type: Number, // 0 : free, 1 : booked, 2 : closed
+      default: 0
     },
     bookTime: [
       {
