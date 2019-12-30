@@ -11,7 +11,7 @@ router.post('/signin', userController.userLogin);
 
 //room
 router.post('/room/book', authenticate, userController.userLogin);
-router.get('/room/list', authenticate, roomController.getListRoom);
-router.get('/room/search', authenticate, roomController.searchRoom);
+router.get('/room/list', roomController.getListRoom);
+router.get('/room/search', roomController.searchRoom);
 
 module.exports = router;
