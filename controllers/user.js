@@ -7,21 +7,21 @@ const keys = require('../config/keys');
 exports.createUser = (req, res, next) => {
   const { errors, isValid } = validateRegistration(req.body);
   if (!isValid) {
-    return res.status(400).json(errors);
+    return res.status(400).json({ errors: errors });
   } else {
     // Check if user email already exists in the database
     const userEmail = req.body.email.toLowerCase();
     User.findOne({ email: userEmail }).then(user => {
       if (user) {
         errors.email = 'Email already exists';
-        return res.status(400).json(errors);
+        return res.status(400).json({ errors: errors });
       } else {
         // Check if user phoneNumber already exists in the database
         User.findOne({ phoneNumber: req.body.phoneNumber })
           .then(user => {
             if (user) {
               errors.phoneNumber = 'Phone number already exists';
-              return res.status(400).json(errors);
+              return res.status(400).json({ errors: errors });
             } else {
               const { phoneNumber, email, password, firstName, lastName, address } = req.body;
               // Create new user and save it
@@ -54,7 +54,7 @@ exports.userLogin = (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
   // Check Validation
   if (!isValid) {
-    return res.status(400).json(errors);
+    return res.status(400).json({ errors: errors });
   }
 
   const email = req.body.email;
@@ -65,7 +65,7 @@ exports.userLogin = (req, res) => {
     // Check for user
     if (!user) {
       errors.email = 'User not found';
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors: errors });
     }
 
     // Check password
@@ -100,7 +100,7 @@ exports.userLogin = (req, res) => {
         }
       } else {
         errors.password = 'Password incorrect';
-        return res.status(400).json(errors);
+        return res.status(400).json({ errors: errors });
       }
     });
   });
