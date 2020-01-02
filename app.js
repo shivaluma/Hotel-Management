@@ -10,7 +10,7 @@ const adminRouter = require('./routes/admin');
 var createError = require('http-errors');
 //value
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 
 app.use(cors());
 app.use(express.json());
