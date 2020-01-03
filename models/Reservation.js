@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-var bookSchema = new Schema({
+var reservationSchema = new Schema({
   room: {
     type: Schema.Types.ObjectId,
     ref: 'Room',
@@ -23,6 +23,14 @@ var bookSchema = new Schema({
     type: Number,
     required: true
   },
+  adults: {
+    type: Number,
+    required: true
+  },
+  childs: {
+    type: Number,
+    required: true
+  },
   isPaid: {
     type: Boolean,
     required: true
@@ -30,5 +38,5 @@ var bookSchema = new Schema({
   dateAdded: { type: Date, default: Date.now }
 });
 
-const Book = mongoose.model('Book', bookSchema);
-module.exports = Book;
+const Reservation = mongoose.model('Reservation', reservationSchema);
+module.exports = Reservation;

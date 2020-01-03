@@ -71,6 +71,10 @@ var roomSchema = new Schema({
         byUser: {
           type: Schema.Types.ObjectId,
           ref: 'User'
+        },
+        reservation: {
+          type: Schema.Types.ObjectId,
+          ref: 'Reservation'
         }
       }
     ]
