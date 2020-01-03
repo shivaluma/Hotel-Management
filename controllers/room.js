@@ -61,20 +61,48 @@ exports.searchRoom = (req, res) => {
     error.childs = 'No childs';
   }
 
-  if (errCount) return res.status(400).json({ errCount: errCount, error: error });
+  if (errCount) return res.status(400).json({ errorCount: errCount, error: error });
 
-  // const arrival = new Date(arrivalDate).getTime();
-  // const departure = new Date(departureDate).getTime();
+  const arrival = new Date(arrivalDate).getTime();
+  const departure = new Date(departureDate).getTime();
+  console.log(arrival + ' ' + departure);
   const persons = Number(adults) + Number(childs);
   Room.find({
     'status.currentStatus': { $lt: 2 },
     max: { $gt: persons - 1 }
   })
     .then(rooms => {
-      return res.status(200).json({ total: rooms.length, listRooms: rooms });
+      let result = [];
+      for (var i = 0; i < rooms.length; i++) {
+        let isFree = true;
+        for (var j = 0; j < rooms[i].status.bookTime.length; j++) {
+          let startDate = rooms[i].status.bookTime[j].startDate;
+          let endDate = rooms[i].status.bookTime[j].endDate;
+          if ((startDate != undefined && startDate < departure) || (endDate != undefined && endDate > arrival)) {
+            isFree = false;
+          }
+        }
+        if (isFree) result.push(rooms[i]);
+      }
+      return res.status(200).json({ total: result.length, listRooms: result });
     })
     .catch(err => {
       console.log(err);
       res.status(500).json({ message: 'Server error when search rooms' });
     });
+};
+
+exports.getRoomInfo = (req, res) => {
+  const roomId = req.query.roomId;
+  if (roomId == undefined) {
+    res.status(400).json({ message: 'No roomId found' });
+    return;
+  }
+  Room.findById(roomId, (err, room) => {
+    if (err) {
+      res.status(404).json({ message: 'Room not found' });
+      return;
+    }
+    res.status(200).json({ room: room });
+  });
 };

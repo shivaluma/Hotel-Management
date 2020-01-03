@@ -13,5 +13,6 @@ router.post('/signin', userController.userLogin);
 router.post('/room/book', authenticate, userController.userLogin);
 router.get('/room/list', roomController.getListRoom);
 router.get('/room/search', roomController.searchRoom);
+router.get('/room/info', roomController.getRoomInfo);
 
 module.exports = router;
