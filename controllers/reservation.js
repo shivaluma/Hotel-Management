@@ -22,7 +22,7 @@ exports.createReservation = (req, res) => {
       return;
     }
 
-    if (departureDate - endDate > 2592000000) {
+    if (departureDate - arrivalDate > 2592000000) {
       error.date = 'Cannot book more than 30 days';
       errorCount++;
       return res.status(400).json({ errorCount: errorCount, error: error });
