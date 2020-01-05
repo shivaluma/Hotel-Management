@@ -32,7 +32,7 @@ exports.createReservation = (req, res) => {
     for (var j = 0; j < room.status.bookTime.length; j++) {
       let startDate = room.status.bookTime[j].startDate;
       let endDate = room.status.bookTime[j].endDate;
-      if ((startDate != undefined && startDate < departureDate) || (endDate != undefined && endDate > arrivalDate)) {
+      if (startDate != undefined && startDate < departureDate && endDate != undefined && endDate > arrivalDate) {
         isFree = false;
       }
     }
