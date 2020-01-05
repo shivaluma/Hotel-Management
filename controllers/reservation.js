@@ -21,6 +21,12 @@ exports.createReservation = (req, res) => {
       res.status(400).json({ errorCount: errorCount, error: error });
       return;
     }
+
+    if (departureDate - endDate > 2592000000) {
+      error.date = 'Cannot book more than 30 days';
+      errorCount++;
+      return res.status(400).json({ errorCount: errorCount, error: error });
+    }
     // check xem co trung ngay ko
     let isFree = true;
     for (var j = 0; j < room.status.bookTime.length; j++) {
