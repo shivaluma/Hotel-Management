@@ -144,3 +144,33 @@ exports.cancelReservation = (req, res) => {
     }
   });
 };
+
+exports.approveReservation = (req, res) => {
+  const { userId, reservationId } = req.body;
+  if (!reservationId || !userId) {
+    return res.status(404).json({ message: 'No reservationId and UserId found' });
+  }
+  Reservation.findById(reservationId, async (err, reser) => {
+    if (err) {
+      return res.status(500).json({ message: 'Some errors occur when get reservation' });
+    }
+
+    if (!reser) {
+      return res.status(404).json({ message: 'No reservation found with this id' });
+    }
+
+    await User.findById(userId).then(async user => {
+      if (!user) {
+        return res.status(404).json({ message: 'No user found with this id' });
+      }
+      if (user.role > 0) {
+        reser.status = 2;
+        await reser.save().then(p => {
+          return res.status(200).json({ message: 'Admin : approve success' });
+        });
+      } else {
+        return res.status(400).json({ message: 'You dont have permission to do this request' });
+      }
+    });
+  });
+};
