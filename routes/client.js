@@ -13,7 +13,7 @@ router.post('/signin', userController.userLogin);
 //room
 router.post('/room/book', authenticate, reservationController.createReservation);
 router.post('/user/listbook', authenticate, reservationController.getListReservation);
-router.post('/room/cancel', authenticate, reservationController.cancelReservation);
+router.post('/reservation/cancel', authenticate, reservationController.cancelReservation);
 router.get('/room/list', roomController.getListRoom);
 router.get('/room/search', roomController.searchRoom);
 router.get('/room/info', roomController.getRoomInfo);

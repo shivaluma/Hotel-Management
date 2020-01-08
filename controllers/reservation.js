@@ -1,5 +1,6 @@
 const Reservation = require('../models/Reservation');
 const Room = require('../models/Room');
+const User = require('../models/User');
 const isEmpty = require('../utils/checkEmpty');
 
 exports.createReservation = (req, res) => {
@@ -90,11 +91,57 @@ exports.getListReservation = (req, res) => {
 };
 
 exports.cancelReservation = (req, res) => {
-  const { reservationId } = req.body.reservationId;
-  if (!reservationId) {
-    return res.json(404).json({ message: 'No reservationId found' });
+  const { userId, reservationId } = req.body;
+  if (!reservationId || !userId) {
+    return res.status(404).json({ message: 'No reservationId and UserId found' });
   }
-  Reservation.findById(reservationId, (err, res) => {
-    if (err) return res.json(500).json({ message: 'Some errors occur when get reservation' });
+  Reservation.findById(reservationId, async (err, reser) => {
+    if (err) {
+      return res.status(500).json({ message: 'Some errors occur when get reservation' });
+    }
+
+    if (!reser) {
+      return res.status(404).json({ message: 'No reservation found with this id' });
+    }
+
+    await User.findById(userId).then(async user => {
+      if (!user) {
+        return res.status(404).json({ message: 'No user found with this id' });
+      }
+      if (user.role > 0) {
+        reser.status = 0;
+        await reser.save().then(p => {
+          Room.find({ 'status.bookTime': { $elemMatch: { reservation: reservationId } } }).then(room => {
+            for (var i = 0; i < room.status.bookTime.length; i++) {
+              if (room.status.bookTime[i].reservation == reservationId) {
+                room.status.bookTime.splice(i, 1);
+                room.save();
+                break;
+              }
+            }
+          });
+
+          return res.status(200).json({ message: 'Admin : Cancel success' });
+        });
+      }
+    });
+
+    if (reser.user != userId) {
+      return res.status(400).json({ message: 'You are not allow to cancel this reservation' });
+    } else {
+      reser.status = 0;
+      reser.save().then(p => {
+        Room.find({ 'status.bookTime': { $elemMatch: { reservation: reservationId } } }).then(room => {
+          for (var i = 0; i < room.status.bookTime.length; i++) {
+            if (room.status.bookTime[i].reservation == reservationId) {
+              room.status.bookTime.splice(i, 1);
+              room.save();
+              break;
+            }
+          }
+        });
+        return res.status(200).json({ message: 'Cancel success' });
+      });
+    }
   });
 };

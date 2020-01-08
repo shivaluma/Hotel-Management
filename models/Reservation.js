@@ -35,6 +35,10 @@ var reservationSchema = new Schema({
     type: Boolean,
     required: true
   },
+  status: {
+    type: Number,
+    default: 1 // 1 : da tiep nhan, 2 : da duyet, 0 : da huy
+  },
   dateAdded: { type: Date, default: Date.now }
 });
 
