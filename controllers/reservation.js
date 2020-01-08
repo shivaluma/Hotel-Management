@@ -110,8 +110,8 @@ exports.cancelReservation = (req, res) => {
       }
       if (user.role > 0) {
         reser.status = 0;
-        await reser.save().then(p => {
-          Room.find({ 'status.bookTime': { $elemMatch: { reservation: reservationId } } }).then(room => {
+        await reser.save().then(async p => {
+          await Room.findById(reser.room).then(room => {
             for (var i = 0; i < room.status.bookTime.length; i++) {
               if (room.status.bookTime[i].reservation == reservationId) {
                 room.status.bookTime.splice(i, 1);
@@ -120,7 +120,6 @@ exports.cancelReservation = (req, res) => {
               }
             }
           });
-
           return res.status(200).json({ message: 'Admin : Cancel success' });
         });
       }
@@ -130,8 +129,8 @@ exports.cancelReservation = (req, res) => {
       return res.status(400).json({ message: 'You are not allow to cancel this reservation' });
     } else {
       reser.status = 0;
-      reser.save().then(p => {
-        Room.find({ 'status.bookTime': { $elemMatch: { reservation: reservationId } } }).then(room => {
+      reser.save().then(async p => {
+        await Room.findById(reser.room).then(room => {
           for (var i = 0; i < room.status.bookTime.length; i++) {
             if (room.status.bookTime[i].reservation == reservationId) {
               room.status.bookTime.splice(i, 1);
