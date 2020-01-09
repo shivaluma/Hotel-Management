@@ -19,8 +19,13 @@ exports.createReservation = (req, res) => {
     if (!room) {
       error.roomId = 'Error when find room';
       errorCount++;
-      res.status(400).json({ errorCount: errorCount, error: error });
-      return;
+      return res.status(400).json({ errorCount: errorCount, error: error });
+    }
+
+    if (departureDate - arrivalDate < 86000) {
+      error.date = 'Cannot book fewer than 1 days';
+      errorCount++;
+      return res.status(400).json({ errorCount: errorCount, error: error });
     }
 
     if (departureDate - arrivalDate > 2592000000) {
